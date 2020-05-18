@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
+import Layout from '../components/Layout'
 // TODO(toplenboren): remove hardcoded ENDPOINT value
 const ENDPOINT = "http://127.0.0.1:3001";
 
@@ -14,7 +15,7 @@ export default function Timer() {
     }, []);
 
     return (
-    <>
+    <Layout>
         <p>
             Timer {response}
         </p>
@@ -36,6 +37,6 @@ export default function Timer() {
         }}>
             Clear Timer
         </button>
-    </>
+    </Layout>
     );
 }
