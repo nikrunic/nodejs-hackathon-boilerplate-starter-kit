@@ -2,6 +2,8 @@ import React from "react";
 import socketIOClient from "socket.io-client";
 import Layout from '../components/Layout'
 import TimerComponent from '../components/TimerComponent'
+import TimerForm from '../components/TimerForm'
+import { message } from 'antd';
 
 // TODO(toplenboren): remove hardcoded ENDPOINT value
 // TODO(tramakarov): add time sync with server
@@ -20,7 +22,10 @@ class Timer extends React.Component {
             minutes: -1,
             seconds: 0,
             nextPeriodLength: -1,
-            showTime: true
+            showTime: true,
+            workLength: -1,
+            shortBreakLength: -1,
+            longBreakLength: -1,
         }
     }
 
@@ -36,14 +41,14 @@ class Timer extends React.Component {
             }
         }
 
-        if (this.state.minutes === -1) {
+        if (this.state.minutes === -1 && this.state.timerType !== undefined) {
             if (this.state.timerType === 'WORK') {
                 if (this.state.laps === 3) {
                     this.setState({
                         laps: 0,
                         timerType: TimerTypes.LONG_REST,
-                        minutes: 30,
-                        seconds: 0,
+                        minutes: 0,
+                        seconds: 15,
                         nextPeriodLength: 25
                     })
                 }
@@ -51,16 +56,16 @@ class Timer extends React.Component {
                     this.setState({
                         laps: this.state.laps + 1,
                         timerType: TimerTypes.REST,
-                        minutes: 5,
-                        seconds: 0,
+                        minutes: 0  ,
+                        seconds: 3,
                         nextPeriodLength: 25
                     })
                 }
             } else {
                 this.setState({
                     timerType: TimerTypes.WORK,
-                    minutes: 25,
-                    seconds: 0,
+                    minutes: 0,
+                    seconds: 5,
                     nextPeriodLength: this.state.laps === 3 ? 30 : 5
                 })
             }
@@ -80,21 +85,49 @@ class Timer extends React.Component {
         this.setState({isPaused : !this.state.isPaused, showTime: true})
     }
 
+    showError = (text) => message.error(text);
+
+    startTimer(props) {
+        if (props.workLength === undefined || props.shortBreakLength === undefined || props.longBreakLength === undefined) {
+            this.showError('Set up periods length, please')
+        } else {
+            this.setState({
+                timerType: 'WORK',
+                minutes: props.workLength,
+                nextPeriodLength: props.shortBreakLength,
+                workLength: props.workLength,
+                shortBreakLength: props.shortBreakLength,
+                longBreakLength: props.longBreakLength,
+            })
+        }
+    }
+
+    getRepresentationByState() {
+        if (this.state.timerType === undefined) {
+            return (
+                <Layout>
+                    <TimerForm onFinish={(props) => (this.startTimer(props))}/>
+                </Layout>
+                )
+        } else {
+            return (
+                <Layout>
+                    <TimerComponent
+                        timer={this.stringifyTime()}
+                        isPaused={this.state.isPaused}
+                        showTime={this.state.showTime}
+                        timerType={this.state.timerType}
+                        nextPeriodLength={this.state.nextPeriodLength}
+                        onPauseTimer={() => this.pauseTimer()}
+                    />
+                </Layout>
+            )
+        }
+    }
+
     render() {
-        return (
-        <Layout>
-            <TimerComponent
-                timer={this.stringifyTime()}
-                isPaused={this.state.isPaused}
-                showTime={this.state.showTime}
-                timerType={this.state.timerType}
-                nextPeriodLength={this.state.nextPeriodLength}
-                onPauseTimer={() => this.pauseTimer()}
-            />
-        </Layout>
-        );
+        return this.getRepresentationByState()
     }
 }
 
 export default Timer
-
