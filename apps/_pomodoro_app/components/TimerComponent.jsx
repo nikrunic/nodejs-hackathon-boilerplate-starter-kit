@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Spin } from 'antd'
+import { Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons';
 import './TimerComponent.less'
 import TimerTemplate from './TimerTemplate'
@@ -10,12 +10,9 @@ const spinIcon = <LoadingOutlined style={{ fontSize: 128 }} spin />;
 
 export default function TimerComponent(props) {
     if (props.timerType !== undefined) {
-
     return(
-        <div className="display-container">
-            <Row>
-                <Col span={12}>
-                    <div className="timer-template">
+        <div className="wrapper">
+            <div className="timer-template">
                         <TimerTemplate
                             timer={props.timer}
                             isPaused={props.isPaused}
@@ -24,12 +21,10 @@ export default function TimerComponent(props) {
                             nextPeriodLength={props.nextPeriodLength}
                             onPauseTimer={() => props.onPauseTimer()}
                         />
-                    </div>
-                </Col>
-                <Col span={12}>
-                    {props.timerType === 'REST'? <Rest/> : <Work/>}
-                </Col>
-            </Row>
+            </div>
+            <div className='image'>
+                {props.timerType === 'REST'? <Rest/> : <Work/>}
+            </div>
         </div>
     )
     } else {

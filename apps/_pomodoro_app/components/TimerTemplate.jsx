@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { Row, Popover, Typography } from 'antd';
+import React from 'react'
+import { Typography, Button } from 'antd';
 import './TimerTemplate.less'
-import { CloseOutlined } from '@ant-design/icons'
+import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons'
+import { WORK } from '../pages/[id]'
 
 
 const { Text } = Typography;
-const TimerTypes = {"WORK":"WORK", "REST":"REST", "LONG_REST": "REST"}
 
 function getNextPeriodString(isPaused, timerType, length) {
     if(!isPaused)
     {
-        return timerType === TimerTypes.WORK
+        return timerType === WORK
             ? "Next: " + length + " minute break"
             : "Next: " + length + " minute work"
     } else {
@@ -19,45 +19,41 @@ function getNextPeriodString(isPaused, timerType, length) {
 }
 
 function getHeading(timerType) {
-    return timerType === TimerTypes.WORK
+    return timerType === WORK
         ? "Work!"
         : "Break!"
 }
 
 function getTimeStyle(showTime, timerType) {
     if(showTime) {
-        return timerType===TimerTypes.WORK ? "time_work" : "time_rest"
+        return timerType===WORK ? "time_work" : "time_rest"
     } else {
         return "time_pause"
     }
 }
 
 export default function TimerTemplate(props) {
-    const [popoverVisible, setPopoverVisible] = useState(true);
-    const popoverContent = (
-        <>
-            Click on time to pause timer &nbsp;
-            <CloseOutlined style={{"color": "#1890ff"}} onClick={() => setPopoverVisible(false)}/>
-        </>
-    )
     return(
-        <React.Fragment className="template_container">
-            <Row>
+        <React.Fragment>
+            <div className='wrapper-vertical'>
                 <Text className="heading">{getHeading(props.timerType)}</Text>
-            </Row>
-            <Row>
-                <Popover visible={popoverVisible} content={popoverContent} >
-                    <Text
-                        className={getTimeStyle(props.showTime, props.timerType)}
-                        onClick={() => props.onPauseTimer()}
-                    >
-                        {props.timer}
-                    </Text>
-                </Popover>
-            </Row>
-            <Row>
-                <Text className="next">{getNextPeriodString(props.isPaused, props.timerType, props.nextPeriodLength)}</Text>
-            </Row>
+                <Text
+                    className={getTimeStyle(props.showTime, props.timerType)}
+                >
+                    {props.timer}
+                </Text>
+                <Text className="next">
+                    {getNextPeriodString(props.isPaused, props.timerType, props.nextPeriodLength)}
+                </Text>
+                <Button
+                    size={'large'}
+                    className="pause-button"
+                    icon={props.isPaused ? <CaretRightOutlined /> : <PauseOutlined />}
+                    onClick={() => props.onPauseTimer()}
+                >
+                    {props.isPaused ? "Start" : "Pause"}
+                </Button>
+            </div>
         </React.Fragment>
     )
 }

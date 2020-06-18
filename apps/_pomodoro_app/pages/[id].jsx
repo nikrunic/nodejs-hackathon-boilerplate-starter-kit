@@ -1,31 +1,30 @@
 import React from "react";
-import socketIOClient from "socket.io-client";
 import Layout from '../components/Layout'
 import TimerComponent from '../components/TimerComponent'
-import TimerForm from '../components/TimerForm'
-import { message } from 'antd';
-
+import { Spin } from 'antd'
 // TODO(toplenboren): remove hardcoded ENDPOINT value
-// TODO(tramakarov): add time sync with server
+export const WORK = 'WORK'
+export const BREAK = 'BREAK'
+export const BIG_BREAK = 'BREAK'
 const ENDPOINT = "http://127.0.0.1:3001";
-const TimerTypes = {"WORK":"WORK", "REST":"REST", "LONG_REST": "REST"}
 
 
 
 class Timer extends React.Component {
+    //TODO(tramakarov): Replace constructor with fetching data from server
     constructor (props) {
         super(props)
         this.state = {
-            timerType: undefined,
+            timerType: WORK,
             laps: 0,
-            isPaused: false,
-            minutes: -1,
+            isPaused: true,
+            minutes: 25,
             seconds: 0,
-            nextPeriodLength: -1,
+            nextPeriodLength: 5,
             showTime: true,
-            workLength: -1,
-            shortBreakLength: -1,
-            longBreakLength: -1,
+            workLength: 25,
+            shortBreakLength: 5,
+            longBreakLength: 30,
         }
     }
 
@@ -46,7 +45,7 @@ class Timer extends React.Component {
                 if (this.state.laps === 3) {
                     this.setState({
                         laps: 0,
-                        timerType: TimerTypes.LONG_REST,
+                        timerType: BIG_BREAK,
                         minutes: 0,
                         seconds: 15,
                         nextPeriodLength: 25
@@ -55,7 +54,7 @@ class Timer extends React.Component {
                 else {
                     this.setState({
                         laps: this.state.laps + 1,
-                        timerType: TimerTypes.REST,
+                        timerType: BREAK,
                         minutes: 0  ,
                         seconds: 3,
                         nextPeriodLength: 25
@@ -63,7 +62,7 @@ class Timer extends React.Component {
                 }
             } else {
                 this.setState({
-                    timerType: TimerTypes.WORK,
+                    timerType: BIG_BREAK,
                     minutes: 0,
                     seconds: 5,
                     nextPeriodLength: this.state.laps === 3 ? 30 : 5
@@ -85,30 +84,12 @@ class Timer extends React.Component {
         this.setState({isPaused : !this.state.isPaused, showTime: true})
     }
 
-    showError = (text) => message.error(text);
-
-    startTimer(props) {
-        if (props.workLength === undefined || props.shortBreakLength === undefined || props.longBreakLength === undefined) {
-            this.showError('Set up periods length, please')
-        } else {
-            this.setState({
-                timerType: 'WORK',
-                minutes: props.workLength,
-                nextPeriodLength: props.shortBreakLength,
-                workLength: props.workLength,
-                shortBreakLength: props.shortBreakLength,
-                longBreakLength: props.longBreakLength,
-            })
-        }
-    }
 
     getRepresentationByState() {
         if (this.state.timerType === undefined) {
             return (
-                <Layout>
-                    <TimerForm onFinish={(props) => (this.startTimer(props))}/>
-                </Layout>
-                )
+                <Spin />
+            )
         } else {
             return (
                 <Layout>
