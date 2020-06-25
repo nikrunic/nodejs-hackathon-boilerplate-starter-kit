@@ -3,14 +3,22 @@ import './BlockComponentsStyles.less'
 import { Button, Row, Col, Typography, Space } from 'antd'
 import WorkingWoman from '../public/images/WorkingWoman'
 import { useRouter } from 'next/router'
+import { postTimer } from './TimerApi'
 
 const { Text } = Typography;
 
+
+
 export default function StartTimerIndexBlock(props) {
-    //TODO(tramakarov): Implement routing
     const router = useRouter()
+    const intervalsJson = {
+        'break':5*60,
+        'bigBreak':30*60,
+        'workTime':25*60,
+    }
     const startTimer = () => {
-        router.push('/TESTTIMER');
+        const id = postTimer(intervalsJson)
+        router.push(`/timer/${id}`);
     }
 
     const setupTimer = () => {

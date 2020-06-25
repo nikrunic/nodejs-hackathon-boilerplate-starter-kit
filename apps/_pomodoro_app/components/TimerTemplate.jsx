@@ -2,15 +2,15 @@ import React from 'react'
 import { Typography, Button } from 'antd';
 import './TimerTemplate.less'
 import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons'
-import { WORK } from '../pages/[id]'
+import { WORK } from '../pages/timer/[id]'
 
 
 const { Text } = Typography;
 
-function getNextPeriodString(isPaused, timerType, length) {
+function getNextPeriodString(isPaused, period, length) {
     if(!isPaused)
     {
-        return timerType === WORK
+        return period === WORK
             ? "Next: " + length + " minute break"
             : "Next: " + length + " minute work"
     } else {
@@ -18,15 +18,15 @@ function getNextPeriodString(isPaused, timerType, length) {
     }
 }
 
-function getHeading(timerType) {
-    return timerType === WORK
+function getHeading(period) {
+    return period === WORK
         ? "Work!"
         : "Break!"
 }
 
-function getTimeStyle(showTime, timerType) {
+function getTimeStyle(showTime, period) {
     if(showTime) {
-        return timerType===WORK ? "time_work" : "time_rest"
+        return period===WORK ? "time_work" : "time_rest"
     } else {
         return "time_pause"
     }
@@ -36,14 +36,14 @@ export default function TimerTemplate(props) {
     return(
         <React.Fragment>
             <div className='wrapper-vertical'>
-                <Text className="heading">{getHeading(props.timerType)}</Text>
+                <Text className="heading">{getHeading(props.period)}</Text>
                 <Text
-                    className={getTimeStyle(props.showTime, props.timerType)}
+                    className={getTimeStyle(props.showTime, props.period)}
                 >
                     {props.timer}
                 </Text>
                 <Text className="next">
-                    {getNextPeriodString(props.isPaused, props.timerType, props.nextPeriodLength)}
+                    {getNextPeriodString(props.isPaused, props.period, props.nextPeriodLength)}
                 </Text>
                 <Button
                     size={'large'}

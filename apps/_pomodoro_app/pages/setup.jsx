@@ -1,18 +1,26 @@
 import React from 'react'
-import { Form, InputNumber, Button, Space } from 'antd'
+import { Form, InputNumber, Button, message } from 'antd'
 import Text from 'antd/lib/typography/Text'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import Layout from '../components/Layout'
+import { postTimer } from '../components/TimerApi'
+import { useRouter } from 'next/router'
 
 
 export default function Setup() {
-    //TODO(tramakarov): Implement onFinish actions
+    const router = useRouter()
     const onFinish = values => {
-        console.log('Success:', values);
+        const intervalsJson = {
+            break: values.break*60,
+            workTime: values.workTime*60,
+            bigBreak: values.bigBreak*60
+        }
+        const id = postTimer(intervalsJson)
+        router.push(`/${id}`);
     };
 
     const onFinishFailed = errorInfo => {
-        console.log('Failed:', errorInfo);
+        console.log(errorInfo)
     };
 
     return(
@@ -30,7 +38,7 @@ export default function Setup() {
                         Work
                         <Form.Item
                             className='text-24px'
-                            name="work"
+                            name="workTime"
                             rules={[{ required: true, message: 'Set up this period please' }]}
                             initialValue={25}
                         >

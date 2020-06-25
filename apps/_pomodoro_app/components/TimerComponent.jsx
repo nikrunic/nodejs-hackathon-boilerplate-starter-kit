@@ -5,11 +5,12 @@ import './TimerComponent.less'
 import TimerTemplate from './TimerTemplate'
 import Rest from '../public/images/Rest'
 import Work from '../public/images/Work'
+import { BREAK } from '../pages/timer/[id]'
 
 const spinIcon = <LoadingOutlined style={{ fontSize: 128 }} spin />;
 
 export default function TimerComponent(props) {
-    if (props.timerType !== undefined) {
+    if (props.period !== undefined) {
     return(
         <div className="wrapper">
             <div className="timer-template">
@@ -17,13 +18,13 @@ export default function TimerComponent(props) {
                             timer={props.timer}
                             isPaused={props.isPaused}
                             showTime={props.showTime}
-                            timerType={props.timerType}
+                            period={props.period}
                             nextPeriodLength={props.nextPeriodLength}
                             onPauseTimer={() => props.onPauseTimer()}
                         />
             </div>
             <div className='image'>
-                {props.timerType === 'REST'? <Rest/> : <Work/>}
+                {props.period === BREAK? <Rest/> : <Work/>}
             </div>
         </div>
     )

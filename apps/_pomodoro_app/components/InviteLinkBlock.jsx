@@ -1,19 +1,20 @@
 import React from 'react'
-import { Form, Input, Button, Typography} from 'antd';
+import { Form, Input, Button, Typography, message } from 'antd'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import './BlockComponentsStyles.less'
 import WorkingPeople from '../public/images/WorkingPeople'
+import { useRouter } from 'next/router'
 
 const { Text } = Typography;
 
 export default function InviteLinkBlock() {
-    //TODO(tramakarov): Implement onFinish actions
+    const router = useRouter()
     const onFinish = values => {
-        console.log('Success:', values);
+        router.push(`/timer/${values.code}`);
     };
 
     const onFinishFailed = errorInfo => {
-        console.log('Failed:', errorInfo);
+        console.log(errorInfo)
     };
     return(
         <React.Fragment>
