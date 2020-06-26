@@ -65,13 +65,7 @@ class Timer extends React.Component {
         var counter = setInterval(() => this.updateTimer(), 1000);
         const sock = io(ENDPOINT, {query: `timer=${this.state.id}`})
         this.setState({socket: sock})
-        this.state.socket.on('timer', (data) => {this.parseTimerState(data)})
-    }
-
-    componentDidUpdate () {
-        const sock = io(ENDPOINT, {query: `timer=${this.state.id}`})
-        this.setState({socket: sock})
-        this.state.socket.on('timer', (data) => {this.parseTimerState(data)})
+        sock.on('timer', (data) => {this.parseTimerState(data)})
     }
 
     stringifyTime() {
@@ -80,8 +74,12 @@ class Timer extends React.Component {
     }
 
     pauseTimer() {
+        if (this.state.isPaused) {
+            this.state.socket.emit('start')
+        } else {
+            this.state.socket.emit('pause')
+        }
         this.setState({isPaused : !this.state.isPaused, showTime: true})
-        this.state.socket.emit('pause')
     }
 
 
@@ -118,3 +116,12 @@ class Timer extends React.Component {
 }
 
 export default withRouter(Timer)
+
+/**
+ * An indicator function that tells next not to use static optimization in order to make query populated
+ * more: https://nextjs.org/docs/routing/dynamic-routes#caveats
+ * @return {Promise<{}>}
+ */
+export async function getServerSideProps() {
+    return { props: {} }
+}
