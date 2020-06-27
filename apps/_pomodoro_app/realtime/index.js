@@ -6,7 +6,6 @@ const ConsoleLogger = require('./application/ConsoleLogger')
 /**
  * One socket is created for one id
  * TODO When socket dies we fire out an logger request to create statistics
- * Pipeline: get the timer for socket -> start session ->
  * @param io
  * @param logger
  * @param auth
@@ -18,7 +17,6 @@ function init (io, logger=new ConsoleLogger(), auth=SimpleAuthMiddleware) {
      * @type {{string, Timer}}
      */
     const timers = {}
-    const sockets = {}
 
     function forgeTimer(id, time, period, nextPreiod, nextPeriodLength, paused) {
         return {
@@ -31,18 +29,19 @@ function init (io, logger=new ConsoleLogger(), auth=SimpleAuthMiddleware) {
         }
     }
 
+    function _emitTimerEvent(io, timer, id) {
+        io.in(id).emit('timer', forgeTimer(id, timer.getTime(), timer.getInterval(), timer.getNextInterval(), timer.getNextIntervalLength(), timer.isPaused()))
+    }
+
     io.use(auth.auth)
 
     io.on('connection', (socket) => {
         const id = socket.request._query['timer']
 
-        if (!sockets.hasOwnProperty(id)) {
-            sockets[id] = []
-        }
-        sockets[id].push(socket)
+        socket.join(id)
 
         if (!timers.hasOwnProperty(id)) {
-            timers[id] = new Timer()
+            timers[id] = new Timer(15*60, 25*60, 25*60)
         }
 
         const timer = timers[id]
@@ -50,28 +49,25 @@ function init (io, logger=new ConsoleLogger(), auth=SimpleAuthMiddleware) {
 
         socket.on('start', () => {
             timer.start()
-            socket.emit('timer', forgeTimer(id, timer.getTime(), 'WORK', 'BREAK', 20, timer.isPaused()))
+            _emitTimerEvent(io, timer, id)
             logger.log(`started timer for ${id}`)
         })
 
         socket.on('pause', () => {
             timer.pause()
-            socket.emit('timer', forgeTimer(id, timer.getTime(), 'WORK', 'BREAK', 20, timer.isPaused()))
+            _emitTimerEvent(io, timer, id)
             logger.log(`paused timer for ${id}`)
         })
 
         socket.on('clear', () => {
             timer.pause()
             timer.reset()
-            socket.emit('timer', forgeTimer(id, timer.getTime(), 'WORK', 'BREAK', 20, timer.isPaused()))
+            _emitTimerEvent(io, timer, id)
             logger.log(`timer was cleared for ${id}`)
         })
 
-        /**
-         * A method is used only for testing purposes
-         */
         socket.on('check', () => {
-            socket.emit('timer', forgeTimer(id, timer.getTime(), 'WORK', 'BREAK', 20, timer.isPaused()))
+            _emitTimerEvent(io, timer, id)
             logger.log(timer.getTime())
         })
     })
