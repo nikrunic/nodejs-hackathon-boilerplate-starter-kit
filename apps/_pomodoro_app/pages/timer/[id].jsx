@@ -41,7 +41,7 @@ class Timer extends React.Component {
 
     updateTimer() {
         if (this.state.period === null) {
-            this.state.socket.emit('start')
+            this.state.socket.emit('check')
             return
         }
 
@@ -57,7 +57,7 @@ class Timer extends React.Component {
         }
 
         if (this.state.minutes === 0 && this.state.seconds <= 1) {
-            this.socket.emit('check')
+            this.state.socket.emit('check')
         }
     }
 
