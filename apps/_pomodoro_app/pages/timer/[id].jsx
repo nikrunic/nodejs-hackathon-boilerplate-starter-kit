@@ -56,7 +56,7 @@ class Timer extends React.Component {
             }
         }
 
-        if (this.state.minutes === 0 && this.state.seconds <= 1) {
+        if (this.state.minutes <= 0 && this.state.seconds <= 1) {
             this.state.socket.emit('check')
         }
     }
@@ -89,22 +89,39 @@ class Timer extends React.Component {
             const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />
             return (
                 <Layout>
-                    <div style={{'display': 'flex', 'align-items': 'center'}}>
+                    <div style={{'display': 'flex', 'align-items': 'center', 'margin-top': '100px'}}>
                         <Spin style={{'margin': 'auto'}} tip={'Connecting...'} indicator={antIcon}/>
                     </div>
                 </Layout>
             )
-        } else {
+        } if (this.state.minutes < 0) {
+            const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />
+            return(
+                <Layout>
+                    <div className='text-30px padding-left-50px' style={{'margin-top': '100px'}}>
+                        Uh oh...
+                    </div>
+                    <div className='text-20px padding-left-50px'>
+                        Server connection is lost. Trying to reconnect&nbsp;
+                        <Spin style={{'margin': 'auto'}} indicator={antIcon}/>
+                    </div>
+                </Layout>
+            )
+        }
+        else {
             return (
                 <Layout>
-                    <TimerComponent
-                        timer={this.stringifyTime()}
-                        isPaused={this.state.isPaused}
-                        showTime={this.state.showTime}
-                        period={this.state.period}
-                        nextPeriodLength={this.state.nextPeriodLength}
-                        onPauseTimer={() => this.pauseTimer()}
-                    />
+                    {/*TODO(tramakarov): Replace with styling in Layout*/}
+                    <div style={{'margin-top': '100px'}}>
+                        <TimerComponent
+                            timer={this.stringifyTime()}
+                            isPaused={this.state.isPaused}
+                            showTime={this.state.showTime}
+                            period={this.state.period}
+                            nextPeriodLength={this.state.nextPeriodLength}
+                            onPauseTimer={() => this.pauseTimer()}
+                        />
+                    </div>
                 </Layout>
             )
         }
