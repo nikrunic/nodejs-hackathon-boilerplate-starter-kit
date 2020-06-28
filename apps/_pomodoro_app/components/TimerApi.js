@@ -1,8 +1,9 @@
 import { ENDPOINT } from '../pages/timer/[id]'
 
-export async function postTimer (intervalsJson) {
-    return await fetch(`${ENDPOINT}/timer/new`, {
+export function postTimer (intervalsJson, redirectToTimer) {
+    return fetch(`${ENDPOINT}/get-timer/`, {
         method: 'POST',
-        data: intervalsJson
-    })
+        headers:{'Content-Type': 'application/json'},
+        data: JSON.stringify(intervalsJson)
+    }).then(data => redirectToTimer(data.id))
 }

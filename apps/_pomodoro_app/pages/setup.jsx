@@ -9,14 +9,18 @@ import { useRouter } from 'next/router'
 
 export default function Setup() {
     const router = useRouter()
+
+    const redirectToTimer = (id) => { router.push(`/timer/${id}`); }
+
     const onFinish = values => {
+
         const intervalsJson = {
             break: values.break*60,
             workTime: values.workTime*60,
             bigBreak: values.bigBreak*60
         }
-        const id = postTimer(intervalsJson)
-        router.push(`/${id}`);
+
+        postTimer(intervalsJson, redirectToTimer)
     };
 
     const onFinishFailed = errorInfo => {
@@ -77,4 +81,13 @@ export default function Setup() {
             </Form>
         </Layout>
     )
+}
+
+/**
+ * An indicator function that tells next not to use static optimization in order to make query populated
+ * more: https://nextjs.org/docs/routing/dynamic-routes#caveats
+ * @return {Promise<{}>}
+ */
+export async function getServerSideProps() {
+    return { props: {} }
 }

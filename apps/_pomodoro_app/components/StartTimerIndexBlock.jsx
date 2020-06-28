@@ -16,9 +16,11 @@ export default function StartTimerIndexBlock(props) {
         'bigBreak':30*60,
         'workTime':25*60,
     }
+
+    const redirectToTimer = (id) => { router.push(`/timer/${id}`); }
+
     const startTimer = () => {
-        const id = postTimer(intervalsJson)
-        router.push(`/timer/${id}`);
+        postTimer(intervalsJson, redirectToTimer)
     }
 
     const setupTimer = () => {
