@@ -5,9 +5,6 @@ export default function Layout(props) {
     if (props.justifyCenter === false) {
         return (
             <div className="container">
-                <Head>
-                    <link rel="icon" type="image/x-icon" href="/brand/favicon.ico" />
-                </Head>
                 <Header/>
                 <main>{props.children}</main>
             </div>
