@@ -34,6 +34,7 @@ class Timer extends React.Component {
         const minutes = Math.floor(data.time/60)
         const seconds = Math.floor(data.time%60)
         this.setState({
+            showTime: true,
             isPaused: data.paused,
             minutes: minutes,
             seconds: seconds,
