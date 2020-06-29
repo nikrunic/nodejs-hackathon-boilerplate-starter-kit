@@ -4,10 +4,15 @@ import './index.less'
 import StartTimerIndexBlock from '../components/StartTimerIndexBlock'
 import InviteLinkBlock from '../components/InviteLinkBlock'
 import Text from 'antd/lib/typography/Text'
+import Head from 'next/head'
 
 export default function Home() {
     return(
-        <Layout>
+        <Layout justifyCenter={false}>
+            <Head>
+                <title>Pomodoro</title>
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            </Head>
             <div className='wrapper padding-40px'>
                 <Text className='text-30px black'>Online-timer for pomodoro technique</Text>
             </div>
