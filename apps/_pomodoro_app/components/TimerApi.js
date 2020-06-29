@@ -5,5 +5,5 @@ export function postTimer (intervalsJson, redirectToTimer) {
         method: 'POST',
         headers:{'Content-Type': 'application/json'},
         body: JSON.stringify(intervalsJson)
-    }).then(data.json().then(data => redirectToTimer(data.id)))
+    }).then(data => data.json().then(data => redirectToTimer(data.id)))
 }
