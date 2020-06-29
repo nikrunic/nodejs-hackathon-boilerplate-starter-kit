@@ -1,10 +1,13 @@
 import React from "react";
 import Layout from '../../components/Layout'
 import TimerComponent from '../../components/TimerComponent'
-import { Spin } from 'antd'
+import { Spin, Typography } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
 import io from 'socket.io-client'
 import { withRouter } from 'next/router'
+import Head from 'next/head'
+
+const { Paragraph } = Typography;
 
 // TODO(toplenboren): remove hardcoded ENDPOINT value
 export const WORK = 'WORK'
@@ -82,6 +85,14 @@ class Timer extends React.Component {
         this.setState({isPaused : !this.state.isPaused, showTime: true})
     }
 
+    getTimerHead() {
+        if (this.state.isPaused) {
+            return "Paused..."
+        } else {
+            return this.state.period==WORK ? "Work!" : "Break!"
+        }
+    }
+
 
     getRepresentationByState() {
         //TODO(tramakarov): Move styles to .less
@@ -89,7 +100,11 @@ class Timer extends React.Component {
             const antIcon = <LoadingOutlined style={{ fontSize: 32 }} spin />
             return (
                 <Layout>
-                    <div style={{'display': 'flex', 'align-items': 'center', 'margin-top': '100px'}}>
+                    <Head>
+                        <title>Connecting...</title>
+                        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                    </Head>
+                    <div style={{'display': 'flex', 'align-items': 'center'}}>
                         <Spin style={{'margin': 'auto'}} tip={'Connecting...'} indicator={antIcon}/>
                     </div>
                 </Layout>
@@ -98,6 +113,10 @@ class Timer extends React.Component {
             const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />
             return(
                 <Layout>
+                    <Head>
+                        <title>Uh oh...</title>
+                        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                    </Head>
                     <div className='text-30px padding-left-50px' style={{'margin-top': '100px'}}>
                         Uh oh...
                     </div>
@@ -111,16 +130,22 @@ class Timer extends React.Component {
         else {
             return (
                 <Layout>
-                    {/*TODO(tramakarov): Replace with styling in Layout*/}
-                    <div style={{'margin-top': '100px'}}>
-                        <TimerComponent
-                            timer={this.stringifyTime()}
-                            isPaused={this.state.isPaused}
-                            showTime={this.state.showTime}
-                            period={this.state.period}
-                            nextPeriodLength={this.state.nextPeriodLength}
-                            onPauseTimer={() => this.pauseTimer()}
-                        />
+                    <Head>
+                        <title>{this.stringifyTime()} — {this.getTimerHead()}</title>
+                        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+                    </Head>
+                    <TimerComponent
+                        timer={this.stringifyTime()}
+                        isPaused={this.state.isPaused}
+                        showTime={this.state.showTime}
+                        period={this.state.period}
+                        nextPeriodLength={this.state.nextPeriodLength}
+                        onPauseTimer={() => this.pauseTimer()}
+                    />
+                    <div style={{'display': 'flex', 'align-items': 'center'}}>
+                        <div style={{'margin': 'auto'}} className='text-24px'>
+                            Your timer code — <Paragraph copyable style={{'display': 'inline-block'}}>{this.state.id}</Paragraph>
+                        </div>
                     </div>
                 </Layout>
             )
