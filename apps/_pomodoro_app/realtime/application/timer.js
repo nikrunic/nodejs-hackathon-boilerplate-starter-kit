@@ -1,22 +1,21 @@
-const CyclicQueue = require('./CyclicQueue');
-const Interval = require('./Interval');
+const CyclicQueue = require('./utils/cyclicQueue');
 
 const status = {
     'paused':'paused',
     'working':'working',
 }
 
-const intervals = {
+const periods = {
     'work': 'WORK',
     'break': 'BREAK',
     'bigBreak':'BIG_BREAK'
 }
 
-function getIntervalQueue(breakTime, bigBreakTime, worktimeTime) {
+function getPeriodQueue(breakTime, bigBreakTime, worktimeTime) {
 
-    const workInterval = new Interval(intervals.work, worktimeTime)
-    const breakInterval = new Interval(intervals.break, breakTime)
-    const bigBreakInterval = new Interval(intervals.bigBreak, bigBreakTime)
+    const workInterval = new Period(periods.work, worktimeTime)
+    const breakInterval = new Period(periods.break, breakTime)
+    const bigBreakInterval = new Period(periods.bigBreak, bigBreakTime)
 
     return new CyclicQueue([
         workInterval,
@@ -31,6 +30,16 @@ function getIntervalQueue(breakTime, bigBreakTime, worktimeTime) {
 }
 
 /**
+ * Period model
+ */
+class Period {
+    constructor(name, time) {
+        this.name = name
+        this.time = time
+    }
+}
+
+/**
  * Sets timers off, gives away current time, is unique for one team
  */
 class Timer {
@@ -40,31 +49,31 @@ class Timer {
         this.counterFunction = 0
         this.status = status.paused
 
-        this.intervalQueue = getIntervalQueue(breakTime, bigBreakTime, worktimeTime)
+        this.periodQueue = getPeriodQueue(breakTime, bigBreakTime, worktimeTime)
     }
 
     _incrementTimer() {
         this.timer++
         if(this.getTime() === 0) {
-            this._changeInterval()
+            this._changePeriod()
         }
     }
 
-    _changeInterval() {
+    _changePeriod() {
         this.timer = 0
-        return this.intervalQueue.pop()
+        return this.periodQueue.pop()
     }
 
-    getInterval() {
-        return this.intervalQueue.current().name
+    getPeriod() {
+        return this.periodQueue.current().name
     }
 
-    getNextInterval() {
-        return this.intervalQueue.peekNext().name
+    getNextPeriod() {
+        return this.periodQueue.peekNext().name
     }
 
-    getNextIntervalLength() {
-        return this.intervalQueue.peekNext().time
+    getNextPeriodLength() {
+        return this.periodQueue.peekNext().time
     }
 
     start() {
@@ -91,7 +100,7 @@ class Timer {
     }
 
     getTime() {
-        return this.intervalQueue.current().time - this.timer
+        return this.periodQueue.current().time - this.timer
     }
 }
 

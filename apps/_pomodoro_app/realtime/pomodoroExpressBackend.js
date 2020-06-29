@@ -1,19 +1,23 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
-const {generateLink} = require('./application/utils')
+const createRandomWord = require('./application/utils/createRandomWord')
 
 async function prepareBackApp (store) {
     const app = express()
 
+    app.use(cors())
     app.use(bodyParser.json())
+
 
     app.post('/get-timer', (req, res) => {
         res.setHeader('Content-Type', 'application/json')
 
         if (req.body !== undefined) {
 
-            const timerId = generateLink()
+            console.log(req.body)
+            const timerId = createRandomWord(5) + '-' + createRandomWord(5)
 
             try {
                 const dataObj = {
@@ -34,9 +38,9 @@ async function prepareBackApp (store) {
                 }))
             }
         } else {
-        res.status(400).send(JSON.stringify({
-            detail:'Request body was not specified',
-        }))
+            res.status(400).send(JSON.stringify({
+                detail:'Request body was not specified',
+            }))
         }
     })
 
