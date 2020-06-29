@@ -5,6 +5,7 @@ import { ArrowRightOutlined } from '@ant-design/icons'
 import Layout from '../components/Layout'
 import { postTimer } from '../components/TimerApi'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 
 export default function Setup() {
@@ -29,7 +30,11 @@ export default function Setup() {
 
     return(
         <Layout>
-            <div className='wrapper padding-40px'>
+            <Head>
+                <title>Customize your timer</title>
+                <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+            </Head>
+            <div className='wrapper'>
                 <Text className='text-30px black'>Set up timer periods in minutes</Text>
             </div>
             <Form
@@ -37,7 +42,7 @@ export default function Setup() {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
-                <div className='wrapper'>
+                <div className='wrapper margin-top-40px'>
                     <div className='text-24px'>
                         Work
                         <Form.Item
